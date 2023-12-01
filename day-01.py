@@ -1,7 +1,7 @@
 
 file = open('day-01.txt', 'r')
 
-def getTerm( word ):
+def getTerm_one( word ):
   result = 0
   for c in word:
     if c.isdigit():
@@ -15,26 +15,44 @@ def getTerm( word ):
 
   return result
 
-def convertLine( word ):
-  word = word.replace( "one", "1" )
-  word = word.replace( "two", "2" )
-  word = word.replace( "three", "3" )
-  word = word.replace( "four", "4" )
-  word = word.replace( "five", "5" )
-  word = word.replace( "six", "6" )
-  word = word.replace( "seven", "7" )
-  word = word.replace( "eight", "8" )
-  word = word.replace( "nine", "9" )
-  print( word )
-  return word
+NUMBERS = ['one','two','three','four','five','six','seven','eight','nine']
 
+def getWordDigit( word ):
+  for i,n in enumerate(NUMBERS):
+    if word[:len(n)] == n:
+      return i+1
+  return None
+
+def getTerm_two( word ):
+  result = 0
+  for i,c in enumerate(word):
+    if c.isdigit():
+      result += int(c)*10
+      break
+    else:
+      d = getWordDigit( word[i:] )
+      if d:
+        result += d*10
+        break
+
+  for i,c in enumerate(reversed(word)):
+    if c.isdigit():
+      result += int(c)
+      break
+    else:
+      d = getWordDigit( word[-i-1:] )
+      if d:
+        result += d
+        break
+
+  return result
 
 
 part_one = part_two = 0
 for line in file:
   line = line.strip()
-  part_one += getTerm( line )
-  part_two += getTerm( convertLine( line ) )
+  part_one += getTerm_one( line )
+  part_two += getTerm_two( line )
 
 file.close()
 

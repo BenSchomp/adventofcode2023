@@ -1,19 +1,4 @@
 
-file = open('day-01.txt', 'r')
-
-def getTerm_one( word ):
-  result = 0
-  for c in word:
-    if c.isdigit():
-      result += int(c)*10
-      break
-
-  for c in reversed( word ):
-    if c.isdigit():
-      result += int(c)
-      break
-
-  return result
 
 NUMBERS = ['one','two','three','four','five','six','seven','eight','nine']
 
@@ -23,13 +8,13 @@ def getWordDigit( word ):
       return i+1
   return None
 
-def getTerm_two( word ):
+def getTerm( word, part ):
   result = 0
   for i,c in enumerate(word):
     if c.isdigit():
       result += int(c)*10
       break
-    else:
+    elif( part == 2 ):
       d = getWordDigit( word[i:] )
       if d:
         result += d*10
@@ -39,7 +24,7 @@ def getTerm_two( word ):
     if c.isdigit():
       result += int(c)
       break
-    else:
+    elif( part == 2 ):
       d = getWordDigit( word[-i-1:] )
       if d:
         result += d
@@ -47,13 +32,13 @@ def getTerm_two( word ):
 
   return result
 
-
 part_one = part_two = 0
+
+file = open('day-01.txt', 'r')
 for line in file:
   line = line.strip()
-  part_one += getTerm_one( line )
-  part_two += getTerm_two( line )
-
+  part_one += getTerm( line, 1 )
+  part_two += getTerm( line, 2 )
 file.close()
 
 print( 'part one:', part_one )

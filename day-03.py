@@ -1,29 +1,27 @@
-
-grid = []
 width = height = None
-part_one = part_two = 0
 
-def check( r, c ):
-  #print( r, c )
+def checkOne( r, c ):
   if r < 0 or r >= height or c < 0 or c >= width:
-     return False
-  return not (grid[r][c].isdigit() or grid[r][c] == '.')
+     return None
+
+  if not( grid[r][c].isdigit() or grid[r][c] == '.' ):
+    return (str(c)+','+str(r), grid[r][c])
 
 def checkRow( r, dr, a, b ):
   if r+dr < 0:
-    return False
+    return None
   if dr == 0:
-    return check(r,a) or check(r,b)
+    return checkOne(r,a) or checkOne(r,b)
   if r+dr > height-1:
-    return False
+    return None
 
   i = a
-  while( i <= b ):
-    if check( r+dr, i ):
-      return True
+  done = None
+  while( i <= b and not done ):
+    done = checkOne( r+dr, i )
     i += 1
 
-  return False
+  return done
 
 def isAdjacent( row, a, b ):
   result = checkRow( row, -1, a-1, b+1 ) or \
@@ -32,12 +30,26 @@ def isAdjacent( row, a, b ):
   return result
 
 
+# -------------------------------------------
+
+grid = []
+gears = {}
+part_one = part_two = 0
+x = y = 0
+
 file = open('day-03.txt', 'r')
 for line in file:
   row = []
   line = line.strip()
   for c in line:
     row.append(c)
+    if c == '*':
+      k = str(x)+','+str(y)
+      gears[k] = []
+    x += 1
+
+  y += 1
+  x = 0
 
   grid.append(row)
 file.close()
@@ -67,13 +79,19 @@ for y in range(height):
         checkAdj = True
 
     if checkAdj:
-      #print( '\n*', num )
-      if isAdjacent( y, num_start, num_start+len(num)-1 ):
-        #print( '! Adjacent !' )
+      result = isAdjacent( y, num_start, num_start+len(num)-1 )
+
+      if result:
         part_one += int(num)
+        if result[1] == '*':
+          gears[result[0]].append(num)
+
       num = num_start = None
       checkAdj = False
 
-print()
 print( 'part one:', part_one )
+
+for k,v in gears.items():
+  if( len(v) == 2 ):
+    part_two += int(v[0]) * int(v[1])
 print( 'part two:', part_two )

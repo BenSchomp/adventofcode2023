@@ -13,16 +13,14 @@ for line in file:
   for w in winners.strip().split():
     winning_numbers.add(w)
 
-  value = 0
+  win_count = 0
   for y in yours.strip().split():
     if y in winning_numbers:
-      y = int(y)
-      if value == 0:
-        value = 1
-      else:
-        value *= 2
+      win_count += 1
 
-  part_one += value
+  if win_count > 0:
+    part_one += pow(2, win_count-1)
+
 file.close()
 
 print( "part_one:", part_one )

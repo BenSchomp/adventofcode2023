@@ -33,7 +33,9 @@ seeds = []
 maps = {}
 part_one = part_two = None
 
-file = open('day-05.txt', 'r')
+filename = 'day-05.txt'
+#filename = 'day-05.example'
+file = open(filename, 'r')
 for line in file:
   line = line.strip()
   if not line:
@@ -66,18 +68,32 @@ print( "part_one:", part_one )
 
 # --- part two --- #
 
+seen = set()
 seed_index = 0
 while seed_index+1 < len(seeds):
   seed_start = int(seeds[seed_index])
   seed_range = int(seeds[seed_index+1])
 
+  done = False
   for seed_offset in range(seed_range):
     x = seed_start + seed_offset
+    #print( "* trying seed:%d" % x)
 
+    k = None
     i = 'seed'
     while i != 'location':
-      (x, i) = maps[i].convert(x)
+      k = "%s:%i" % (i, x)
+      if k in seen:
+        done = True
+        break
 
+      (x, i) = maps[i].convert(x)
+      seen.add(k)
+
+    if done:
+      break
+
+    #print( "%s:%i !! done !!" % (i,x) )
     if not part_two or x < part_two:
       part_two = x
 

@@ -1,6 +1,8 @@
 
+#cardRank = {'2':2, '3':3, '4':4, '5': 5, '6':6, '7':7, '8':8, '9':9, \
+#            'T':10, 'J':11, 'Q':12, 'K':13, 'A':14}
 cardRank = {'2':2, '3':3, '4':4, '5': 5, '6':6, '7':7, '8':8, '9':9, \
-            'T':10, 'J':11, 'Q':12, 'K':13, 'A':14}
+            'T':10, 'J':1, 'Q':12, 'K':13, 'A':14}
 rankDisplay = {10:'T', 11:'J', 12:'Q', 13:'K', 14:'A'}
 
 
@@ -29,15 +31,11 @@ class Hand:
     if selfRank != otherRank:
       return selfRank < otherRank
 
-    if self.hiGroup != other.hiGroup:
-      return self.hiGroup < other.hiGroup
-
-    if self.loGroup != other.loGroup:
-      return self.loGroup < other.loGroup
-
-    for i in range(len(self.kickers)):
-      if self.kickers[i] != other.kickers[i]:
-        return self.kickers[i] < other.kickers[i]
+    for i in range(5):
+      a = cardRank[self.cards[i]]
+      b = cardRank[other.cards[i]]
+      if a != b:
+        return a < b
 
     return False
 
@@ -62,11 +60,16 @@ class Hand:
     return result
 
   def rankHand(self):
+    jCount = 0
     for i in range(5):
       count = 1
       cur = cardRank[self.cards[i]]
       if not cur in self.kickers:
         self.kickers.append(cur)
+
+      if self.cards[i] == 'J':
+        jCount += 1
+
       for j in range(5):
         if i == j:
           continue
@@ -96,6 +99,9 @@ class Hand:
             if cur > self.loGroup:
               self.loGroup = cur
 
+      if self.hiCount > 1:
+        self.hiCount += jCount
+
     for i in [self.hiGroup, self.loGroup]:
       if i in self.kickers:
         self.kickers.remove(i)
@@ -116,10 +122,7 @@ file.close()
 
 part_one = 0
 for i, h in enumerate(sorted(hands)):
-  print( i+1, h.getDisplayHand(), h.wager )
+  print( i+1, h.getDisplayHand(), h.wager, h.cards )
   part_one += (i+1) * h.wager
-
-#for h in sorted(hands, reverse=True):
-  #print( h, h.hiCount, h.loCount )
 
 print( "part_one:", part_one )

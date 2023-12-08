@@ -1,8 +1,8 @@
 
 cardRank = {'2':2, '3':3, '4':4, '5': 5, '6':6, '7':7, '8':8, '9':9, \
             'T':10, 'J':11, 'Q':12, 'K':13, 'A':14}
-#cardRank = {'2':2, '3':3, '4':4, '5': 5, '6':6, '7':7, '8':8, '9':9, \
-#            'T':10, 'J':1, 'Q':12, 'K':13, 'A':14}
+
+cardRank['J'] = 1
 
 class Hand:
   def __init__(self, cards, wager):
@@ -12,9 +12,6 @@ class Hand:
     self.wager = int(wager)
 
     self.scoreHand()
-
-  def __str__(self):
-    return self.getDisplayHand()
 
   def __eq__(self, other):
     return sorted(self.cards) == sorted(other.cards)
@@ -33,16 +30,26 @@ class Hand:
 
   def scoreHand(self):
     for i in range(5):
-      cur = cardRank[self.cards[i]]
+      cur = self.cards[i]
       if cur in self.counts:
         self.counts[cur] += 1
       else:
         self.counts[cur] = 1
 
+    if 'J' in self.counts:
+      self.score += self.counts['J'] * 10
+      self.counts['J'] = 0
+
+    print( self.cards, self.counts, self.score )
+
     scores = sorted(self.counts.values(), reverse=True)
     self.score += scores[0]*10
     if len(scores) > 1:
       self.score += scores[1]
+
+    print( self.cards, self.counts, self.score )
+    print()
+
      
 
 # --- main --- #
@@ -63,3 +70,7 @@ for i, h in enumerate(sorted(hands)):
   part_one += (i+1) * h.wager
 
 print( "part_one:", part_one )
+
+# --- part two --- #
+
+

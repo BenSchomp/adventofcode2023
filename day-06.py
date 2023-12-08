@@ -12,6 +12,7 @@ dists = list(map(lambda x: int(x), parts[1].split()))
 
 # --- part one --- #
 part_one = 1
+
 for i, time in enumerate(times):
   goal = dists[i] 
   count = 0
@@ -28,4 +29,22 @@ for i, time in enumerate(times):
 
 print( "part_one:", part_one )
 
+# --- part two ---
+part_two = 1
 
+time = int(''.join(map(lambda x: str(x), times)))
+goal = int(''.join(map(lambda x: str(x), dists)))
+
+count = 0
+t = 1
+speed = 1
+while t < time:
+  speed = t
+  distance = (time - t) * speed
+  if distance > goal:
+    count += 1
+  t += 1
+
+part_two *= count
+
+print( "part_two:", part_two )

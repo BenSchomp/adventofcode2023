@@ -57,9 +57,7 @@ def two():
           done = False
         else:
           if not ghosts[i][1]:
-            ghosts[i][1] = -count
-          elif ghosts[i][1] < 0:
-            ghosts[i][1] = count + ghosts[i][1]
+            ghosts[i][1] = count
             lcm_count += 1
             if lcm_count == len(ghosts):
               done = True

@@ -2,8 +2,6 @@
 cardRank = {'2':2, '3':3, '4':4, '5': 5, '6':6, '7':7, '8':8, '9':9, \
             'T':10, 'J':11, 'Q':12, 'K':13, 'A':14}
 
-cardRank['J'] = 1
-
 class Hand:
   def __init__(self, cards, wager):
     self.cards = cards
@@ -28,7 +26,10 @@ class Hand:
 
     return False
 
-  def scoreHand(self):
+  def scoreHand(self, part_two=False):
+    self.counts = {}
+    self.score = 0
+
     for i in range(5):
       cur = self.cards[i]
       if cur in self.counts:
@@ -36,21 +37,16 @@ class Hand:
       else:
         self.counts[cur] = 1
 
-    if 'J' in self.counts:
+    if part_two and 'J' in self.counts:
+      # jacks are wild
       self.score += self.counts['J'] * 10
       self.counts['J'] = 0
-
-    print( self.cards, self.counts, self.score )
 
     scores = sorted(self.counts.values(), reverse=True)
     self.score += scores[0]*10
     if len(scores) > 1:
       self.score += scores[1]
 
-    print( self.cards, self.counts, self.score )
-    print()
-
-     
 
 # --- main --- #
 
@@ -73,4 +69,13 @@ print( "part_one:", part_one )
 
 # --- part two --- #
 
+# jacks are now wild and lowest rank
+cardRank['J'] = 1
+for h in hands:
+  h.scoreHand(part_two=True)
 
+part_two = 0
+for i, h in enumerate(sorted(hands)):
+  part_two += (i+1) * h.wager
+
+print( "part_two:", part_two )

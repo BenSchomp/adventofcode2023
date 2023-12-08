@@ -1,3 +1,4 @@
+import math
 
 nodes = {}
 
@@ -7,7 +8,6 @@ f = enumerate(file)
 instructions = next(f)[1].strip()
 next(f)
 for line in file:
-
   nodes[line[0:3].strip()] = (line[7:10], line[12:15])
 
 file.close()
@@ -18,18 +18,19 @@ def one():
   count = 0
   curNode = 'AAA'
   while not done:
-    for i in instructions:
+    for d_ in instructions:
+      d = 0
+      if d_ == 'R':
+        d = 1
+
       count += 1
-      if i == 'L':
-        curNode = nodes[curNode][0]
-      else:
-        curNode = nodes[curNode][1]
-      #print( curNode )
+      curNode = nodes[curNode][d]
       if curNode == 'ZZZ':
         done = True
         break
 
   print( "part_one:", count )
+
 
 # --- two --- #
 def two():
@@ -37,40 +38,47 @@ def two():
 
   for k, v in nodes.items():
     if k[2] == 'A':
-      ghosts.append(k)
-
-  print( ghosts )
+      ghosts.append([k,None])
 
   done = False
   count = 0
-  max_x = 0
+  lcm_count = 0
   while not done:
-    for d in instructions:
-      dir = 0
-      if d == 'R':
-        dir = 1
+    for d_ in instructions:
+      d = 0
+      if d_ == 'R':
+        d = 1
 
       count += 1
-
       done = True
-      x = 0
       for i, curNode in enumerate(ghosts):
-        newNode = nodes[curNode][dir]
-        #print( newNode )
+        newNode = nodes[curNode[0]][d]
         if newNode[2] != 'Z':
           done = False
         else:
-          x += 1
+          if not ghosts[i][1]:
+            ghosts[i][1] = -count
+          elif ghosts[i][1] < 0:
+            ghosts[i][1] = count + ghosts[i][1]
+            lcm_count += 1
+            if lcm_count == len(ghosts):
+              done = True
+              break
 
-        ghosts[i] = newNode
-
-      if x > max_x:
-        max_x = x
-        print( ghosts, x, max_x, count )
+        ghosts[i][0] = newNode
 
       if done:
         break
 
-  print( "part_two:", count )
+  if lcm_count == len(ghosts):
+    multiples = []
+    for g in ghosts:
+      multiples.append(g[1])
+    part_two = math.lcm( *multiples )
+  else:
+    part_two = count
 
+  print( "part_two:", part_two )
+
+one()
 two()

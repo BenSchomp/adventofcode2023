@@ -104,7 +104,8 @@ for d in range(4):
     curKey = tryKey
     break
 
-path = [curKey]
+path = set()
+path.add(curKey)
 curNode = nodes[curKey]
 while curNode.shape != 'S':
   #print( path, curNode.neighbors )
@@ -115,14 +116,14 @@ while curNode.shape != 'S':
 
     if tryKey not in path:
       curKey = tryKey
-      path.append(curKey)
+      path.add(curKey)
       curNode = nodes[curKey]
       #print( '  ... adding', curKey )
       break
 
 
-print()
-print( path )
+#print()
+#print( path )
 part_one = int(len(path)/2)
 print( "part_one:", part_one )
 

@@ -2,6 +2,16 @@
 def getKey(x,y):
   return "%d,%d" % (x,y)
 
+def display(grid):
+  for row in grid:
+    out = ''
+    for c in row:
+      if c == 0:
+        out += '.'
+      else:
+        out += 'X'
+    print( out )
+
 class Node:
   def __init__(self, x, y, shape):
     self.x = x
@@ -41,11 +51,36 @@ class Node:
 
     self.neighbors.append(getKey(tryX, tryY))
 
+def solve(x, y):
+  global width, height, maze, visited
+  if x == 0 and y == 0:
+    return True
+  if maze[y][x] == 1 or visited[y][x] == 1:
+    return False
+
+  visited[y][x] = 1
+
+  if x != 0:
+    if solve(x-1, y):
+      return True
+  if x != width-1:
+    if solve(x+1, y):
+      return True
+  if y != 0:
+    if solve(x, y-1):
+      return True
+  if y != height-1:
+    if solve(x, y+1):
+      return True
+
+  return False
+
+
+# --- main ---
 
 row = -1 
 col = -1 
 nodes = {}
-
 max_x = None
 max_y = None
 
@@ -73,8 +108,7 @@ for line in lines:
         startY = row
   col = -1
 
-#for k, v in nodes.items():
-  #print(k, "...", v)
+# --- part one --- #
 
 N = 0
 E = 1
@@ -100,34 +134,64 @@ for d in range(4):
 
   tryKey = getKey(tryX, tryY)
   if tryKey in nodes and curKey in nodes[tryKey].neighbors:
-    #print( 'found neighbor in', tryKey)
     curKey = tryKey
     break
 
-path = set()
-path.add(curKey)
+path = []
+path.append(curKey)
 curNode = nodes[curKey]
 while curNode.shape != 'S':
-  #print( path, curNode.neighbors )
   for tryKey in curNode.neighbors:
-    #print( '+', tryKey, startKey, len(path))
     if tryKey == startKey and len(path) ==1:
       continue
 
     if tryKey not in path:
       curKey = tryKey
-      path.add(curKey)
+      path.append(curKey)
       curNode = nodes[curKey]
-      #print( '  ... adding', curKey )
       break
 
-
-#print()
-#print( path )
 part_one = int(len(path)/2)
 print( "part_one:", part_one )
 
+# --- part two --- #
 
+# make the map double sized so can use maze solving to find
+#  cells that are inner vs outer (doubling allows travel through
+#  adjacent pipes more obvious)
+# also add a border of open space to allow any outer open space a
+#  path to reach (0,0)
+width = (max_x+1)*2 + 2
+height = (max_y+1)*2 + 2
 
+maze = [[ 0 for x in range(width)] for y in range(height)]
+visited = [[ 0 for x in range(width)] for y in range(height)]
+
+# translate to the double map
+for y in range(max_y):
+  for x in range(max_x):
+    curKey = getKey(x, y)
+    if curKey in path:
+      maze[(y*2)+1][(x*2)+1] = 1
+
+# now just need to connect the pipes along the path to fill in the gaps
+
+curX = (startX*2)+1
+curY = (startY*2)+1
+for p in path:
+  (tgtX, tgtY) = p.split(',')
+  tgtX = (int(tgtX)*2)+1
+  tgtY = (int(tgtY)*2)+1
+  gapX = int((curX+tgtX)/2)
+  gapY = int((curY+tgtY)/2)
+  maze[gapY][gapX] = 1
+
+  curX = tgtX
+  curY = tgtY
+
+tryX = 8
+tryY = 8 
+print( solve(tryX, tryY) )
+display(maze)
 
 

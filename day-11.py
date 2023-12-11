@@ -1,4 +1,5 @@
 
+from itertools import combinations
 def display(grid):
   for row in grid:
     print( row )
@@ -38,13 +39,13 @@ def expand(expansion):
   ec = sorted(empty_cols)
   ecl = len(empty_cols) # empty cols length
 
-  eri = row_offset = 0
+  eri = row_offset = 0 # empty rows index
   for i, row in enumerate(grid):
     if eri < erl and i >= er[eri]:
       eri += 1
       row_offset += expansion-1
 
-    eci = col_offset = 0
+    eci = col_offset = 0 # empty cols index
     for j, c in enumerate(row):
       if eci < ecl and j >= ec[eci]:
         eci += 1
@@ -53,17 +54,14 @@ def expand(expansion):
         galaxies.append((j+col_offset,i+row_offset))
 
   result = 0
-  numGalaxies = len(galaxies)
-  for i in range(numGalaxies):
-    for j in range(numGalaxies):
-      if i == j:
-        continue
-      g1 = galaxies[i]
-      g2 = galaxies[j]
-      dist = abs(g2[0] - g1[0]) + abs(g2[1] - g1[1])
-      result += dist
+  galaxy_pairs = combinations(galaxies, 2)
+  for p in galaxy_pairs:
+    g1 = p[0]
+    g2 = p[1]
+    dist = abs(g2[0] - g1[0]) + abs(g2[1] - g1[1])
+    result += dist
 
-  return int(result/2)
+  return result
 
 print( "part_one:", expand(2) )
 print( "part_two:", expand(1000000) )

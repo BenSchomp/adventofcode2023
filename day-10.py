@@ -57,7 +57,10 @@ def solve(x, y):
   global width, height
   global maze, visited
   k = getKey(x,y)
+  if k in outside:
+    return True
   if maze[y][x] == 0 and (x == 0 or x == width-1 or y == 0 or y == height-1):
+    outside.add(k)
     return True
   if maze[y][x] == 1 or k in visited:
     return False
@@ -65,12 +68,16 @@ def solve(x, y):
   visited.add(k)
 
   if solve(x-1, y):
+    outside.add(k)
     return True
   if solve(x+1, y):
+    outside.add(k)
     return True
   if solve(x, y-1):
+    outside.add(k)
     return True
   if solve(x, y+1):
+    outside.add(k)
     return True
 
   return False
@@ -79,15 +86,15 @@ max_x = max_y = None
 widgh = height = None
 maze = []
 visited = set()
+outside = set()
 
 # --- main ---
 def main():
-
   row = -1 
   col = -1 
   nodes = {}
   global max_x, max_y, width, height
-  global maze, visited
+  global maze, visited, outside
 
   file = open("day-10.txt", 'r')
   lines = []

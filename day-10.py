@@ -53,7 +53,7 @@ class Node:
 
     self.neighbors.append(getKey(tryX, tryY))
 
-def solve(x, y):
+def isOutside(x, y):
   global width, height
   global maze, visited
   k = getKey(x,y)
@@ -67,16 +67,16 @@ def solve(x, y):
 
   visited.add(k)
 
-  if solve(x-1, y):
+  if isOutside(x-1, y):
     outside.add(k)
     return True
-  if solve(x+1, y):
+  if isOutside(x+1, y):
     outside.add(k)
     return True
-  if solve(x, y-1):
+  if isOutside(x, y-1):
     outside.add(k)
     return True
-  if solve(x, y+1):
+  if isOutside(x, y+1):
     outside.add(k)
     return True
 
@@ -121,7 +121,6 @@ def main():
     col = -1
 
   # --- part one --- #
-
   N = 0
   E = 1
   S = 2
@@ -171,11 +170,8 @@ def main():
   # make the map double sized so can use maze solving to find
   #  cells that are inner vs outer (doubling allows travel through
   #  adjacent pipes more obvious)
-  # also add a border of open space to allow any outer open space a
-  #  path to reach (0,0)
   width = (max_x+1)*2
   height = (max_y+1)*2
-
   maze = [[ 0 for x in range(width)] for y in range(height)]
 
   # translate to the double map
@@ -207,7 +203,7 @@ def main():
         continue
 
       visited.clear()
-      if not solve(tryX*2, tryY*2):
+      if not isOutside(tryX*2, tryY*2):
         part_two += 1
 
   print( "part_two:", part_two )
